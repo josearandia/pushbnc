@@ -1,0 +1,53 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - desktop/**
+      - .github/workflows/build-windows-exe.yml
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        working-directory: desktop
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build bncpush.exe
+        working-directory: desktop
+        run: |
+          pyinstaller --noconsole --onefile --name bncpush main.py
+
+      - name: Prepare artifact folder
+        run: |
+          New-Item -ItemType Directory -Path package -Force | Out-Null
+          Copy-Item -Path desktop/dist/bncpush.exe -Destination package/bncpush.exe -Force
+          Copy-Item -Path desktop/datos.env.example -Destination package/datos.env.example -Force
+          Copy-Item -Path desktop/README.md -Destination package/README.md -Force
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bncpush-windows
+          path: package
+          if-no-files-found: error

@@ -1,0 +1,23 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+
+# Local env files (do not commit secrets)
+.env
+*.env
+!*.env.example
+!*datos.env.example
+
+# Build artifacts
+dist/
+build/
+*.spec
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
