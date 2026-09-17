@@ -29,11 +29,11 @@ class DetailPopup(tk.Toplevel):
         container.grid(row=0, column=0, sticky='nsew')
 
         fields = [
-            ('destiny_bank_reference', record.destiny_bank_reference),
-            ('OriginBankCode', record.origin_bank_code),
-            ('ClientID', record.client_id),
-            ('ClientPhone', record.client_phone),
-            ('Amount', record.amount),
+            ('Fecha transaccion', record.tx_date),
+            ('Cedula/RIF', record.client_id),
+            ('Referencia destino', record.destiny_bank_reference),
+            ('Banco origen', record.origin_bank_code),
+            ('Monto', record.amount),
         ]
 
         for idx, (label, value) in enumerate(fields):

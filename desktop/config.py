@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 class Settings:
     api_base_url: str
     api_bearer_token: str
+    commerce_phone: str
     timeout_seconds: int
 
 
@@ -36,6 +37,7 @@ def load_settings() -> Settings:
 
     api_base_url = os.getenv('API_BASE_URL', '').strip().rstrip('/')
     api_bearer_token = os.getenv('API_BEARER_TOKEN', '').strip()
+    commerce_phone = os.getenv('COMMERCE_PHONE', '').strip()
 
     timeout_raw = os.getenv('REQUEST_TIMEOUT_SECONDS', '10').strip()
     try:
@@ -49,8 +51,12 @@ def load_settings() -> Settings:
     if not api_bearer_token:
         raise ValueError(f'API_BEARER_TOKEN no esta configurado en {env_path}')
 
+    if not commerce_phone:
+        raise ValueError(f'COMMERCE_PHONE no esta configurado en {env_path}')
+
     return Settings(
         api_base_url=api_base_url,
         api_bearer_token=api_bearer_token,
+        commerce_phone=commerce_phone,
         timeout_seconds=timeout_seconds,
     )

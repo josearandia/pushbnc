@@ -15,6 +15,10 @@ class NotificationRecord:
     client_id: str
     client_phone: str
     amount: str
+    tx_date: str
+    tx_hour: str
+    payment_type: str
+    fecha_registro: str
 
     @property
     def amount_decimal(self) -> Decimal:
@@ -29,9 +33,10 @@ class ApiError(Exception):
 
 
 class ApiClient:
-    def __init__(self, base_url: str, bearer_token: str, timeout_seconds: int = 10) -> None:
+    def __init__(self, base_url: str, bearer_token: str, commerce_phone: str, timeout_seconds: int = 10) -> None:
         self.base_url = base_url.rstrip('/')
         self.timeout_seconds = timeout_seconds
+        self.commerce_phone = commerce_phone
         self.session = requests.Session()
         self.session.headers.update(
             {
@@ -41,12 +46,12 @@ class ApiClient:
             }
         )
 
-    def get_pending_by_cedula(self, cedula: str) -> list[NotificationRecord]:
+    def get_pending(self, referencia: str) -> list[NotificationRecord]:
         url = f'{self.base_url}/notificaciones.php'
         try:
             response = self.session.get(
                 url,
-                params={'cedula': cedula},
+                params={'referencia': referencia, 'COMMERCE_PHONE': self.commerce_phone},
                 timeout=self.timeout_seconds,
             )
         except requests.RequestException as exc:
@@ -65,12 +70,12 @@ class ApiClient:
 
         return records
 
-    def mark_processed(self, rowid: int) -> NotificationRecord:
+    def mark_processed(self, rowid: int, referencia: int) -> NotificationRecord:
         url = f'{self.base_url}/procesar.php'
         try:
             response = self.session.post(
                 url,
-                json={'rowid': rowid},
+                json={'rowid': rowid, 'referencia': referencia},
                 timeout=self.timeout_seconds,
             )
         except requests.RequestException as exc:
@@ -92,6 +97,10 @@ class ApiClient:
             client_id=str(item.get('client_id', '') or ''),
             client_phone=str(item.get('client_phone', '') or ''),
             amount=str(item.get('amount', '') or ''),
+            tx_date=str(item.get('tx_date', '') or ''),
+            tx_hour=str(item.get('tx_hour', '') or ''),
+            payment_type=str(item.get('payment_type', '') or ''),
+            fecha_registro=str(item.get('fecha_registro', '') or ''),
         )
 
     @staticmethod

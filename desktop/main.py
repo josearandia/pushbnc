@@ -26,6 +26,7 @@ def main() -> None:
     api_client = ApiClient(
         base_url=settings.api_base_url,
         bearer_token=settings.api_bearer_token,
+        commerce_phone=settings.commerce_phone,
         timeout_seconds=settings.timeout_seconds,
     )
 
